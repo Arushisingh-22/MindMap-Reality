@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #F7FBFF;
+  --color-card: #FFFFFF;
+  --color-elevated: #F0F7FD;
+  --color-primary: #38A9F5;
+  --color-primary-hover: #2293DE;
+  --color-surface: #EAF6FF;
+  --color-surface-hover: #D7EEFF;
+  --color-text: #17365D;
+  --color-muted: #64748B;
+  --color-border: #D9EAF7;
+  --color-success: #15803D;
+  --color-error: #DC2626;
+}
+
+.dark {
+  --color-bg: #0B1220;
+  --color-card: #131F32;
+  --color-elevated: #1B2A40;
+  --color-primary: #55B8FF;
+  --color-primary-hover: #38A9F5;
+  --color-surface: #1B2A40;
+  --color-surface-hover: #203751;
+  --color-text: #EDF6FF;
+  --color-muted: #A8B8CC;
+  --color-border: #2B405A;
+  --color-success: #4ADE80;
+  --color-error: #F87171;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
