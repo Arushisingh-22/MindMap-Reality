@@ -6,6 +6,7 @@ import {
   ArrowRight,
   Sparkles,
   Zap,
+  Send,
   CheckCircle,
   HelpCircle,
   Clock,
@@ -33,6 +34,28 @@ export const Home: React.FC = () => {
   const todayQuestion = quizQuestions[0]; // Ohm's law question
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [challengeSubmitted, setChallengeSubmitted] = useState(false);
+
+  const [feedbackForm, setFeedbackForm] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  const handleFeedbackChange = (field: keyof typeof feedbackForm, value: string) => {
+    setFeedbackForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleFeedbackSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!feedbackForm.message.trim()) return;
+    setFeedbackSubmitted(true);
+    setTimeout(() => {
+      setFeedbackSubmitted(false);
+      setFeedbackForm({ name: '', email: '', subject: '', message: '' });
+    }, 2500);
+  };
 
   // Mini Interactive Circuit for Hero
   const [heroVoltage, setHeroVoltage] = useState(6);
@@ -542,6 +565,127 @@ export const Home: React.FC = () => {
             </Link>
           </div>
         )}
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 7. FEEDBACK FORM SECTION */}
+      {/* ========================================================================= */}
+      <section className="py-6">
+        <div className="bg-gradient-to-br from-brand-card via-brand-card to-sky-500/5 border border-brand-border rounded-3xl p-6 sm:p-8 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1.35fr] gap-8 items-start">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/80 text-sky-700 dark:text-sky-300 text-xs font-semibold">
+                <Sparkles className="w-3.5 h-3.5 text-sky-500" />
+                <span>Help us improve</span>
+              </div>
+
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-text tracking-tight">
+                  Share Your Feedback for MindMap Reality
+                </h2>
+                <p className="mt-3 text-sm text-brand-muted leading-relaxed">
+                  Your thoughts help us shape clearer explanations, stronger real-world connections, and better learning experiences for students everywhere.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  'Tell us what concepts feel confusing or hard to grasp.',
+                  'Suggest a new topic, simulation, or real-life application.',
+                  'Help us improve the clarity and usability of the learning journey.',
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3 rounded-2xl border border-brand-border bg-brand-surface/40 p-3">
+                    <Check className="w-4 h-4 text-brand-primary mt-0.5 shrink-0" />
+                    <p className="text-xs text-brand-muted leading-relaxed">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-brand-card border border-brand-border rounded-2xl p-5 sm:p-6">
+              {feedbackSubmitted ? (
+                <div className="flex flex-col items-center justify-center text-center py-8 px-4">
+                  <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center mb-4">
+                    <CheckCircle className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-brand-text">Thank you for your feedback!</h3>
+                  <p className="mt-2 text-sm text-brand-muted max-w-md">
+                    We appreciate the time you took to help improve MindMap Reality.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="feedback-name" className="block text-xs font-semibold text-brand-text mb-1.5">
+                        Name
+                      </label>
+                      <input
+                        id="feedback-name"
+                        type="text"
+                        value={feedbackForm.name}
+                        onChange={(e) => handleFeedbackChange('name', e.target.value)}
+                        placeholder="Your name"
+                        className="w-full px-3 py-2.5 text-sm bg-brand-surface border border-brand-border rounded-xl text-brand-text placeholder:text-brand-muted focus:outline-none focus:ring-2 focus:ring-sky-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="feedback-email" className="block text-xs font-semibold text-brand-text mb-1.5">
+                        Email
+                      </label>
+                      <input
+                        id="feedback-email"
+                        type="email"
+                        value={feedbackForm.email}
+                        onChange={(e) => handleFeedbackChange('email', e.target.value)}
+                        placeholder="you@example.com"
+                        className="w-full px-3 py-2.5 text-sm bg-brand-surface border border-brand-border rounded-xl text-brand-text placeholder:text-brand-muted focus:outline-none focus:ring-2 focus:ring-sky-400"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="feedback-subject" className="block text-xs font-semibold text-brand-text mb-1.5">
+                      Feedback type
+                    </label>
+                    <input
+                      id="feedback-subject"
+                      type="text"
+                      value={feedbackForm.subject}
+                      onChange={(e) => handleFeedbackChange('subject', e.target.value)}
+                      placeholder="e.g. Concept clarity, UI issue, new topic idea"
+                      className="w-full px-3 py-2.5 text-sm bg-brand-surface border border-brand-border rounded-xl text-brand-text placeholder:text-brand-muted focus:outline-none focus:ring-2 focus:ring-sky-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="feedback-message" className="block text-xs font-semibold text-brand-text mb-1.5">
+                      Your feedback <span className="text-rose-500">*</span>
+                    </label>
+                    <textarea
+                      id="feedback-message"
+                      required
+                      rows={5}
+                      value={feedbackForm.message}
+                      onChange={(e) => handleFeedbackChange('message', e.target.value)}
+                      placeholder="Share your suggestion, comment, or concern with the MindMap Reality team..."
+                      className="w-full px-3 py-2.5 text-sm bg-brand-surface border border-brand-border rounded-xl text-brand-text placeholder:text-brand-muted focus:outline-none focus:ring-2 focus:ring-sky-400 resize-none"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white bg-brand-primary hover:bg-brand-primary-hover transition-all shadow-sm"
+                  >
+                    <Send className="w-4 h-4" />
+                    Submit Feedback
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );
