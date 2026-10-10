@@ -1,23 +1,8 @@
+
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const getEnvVar = (key: string): string => {
-  try {
-    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
-      return import.meta.env[key];
-    }
-  } catch {}
-
-  try {
-    if (typeof process !== 'undefined' && process.env && process.env[key]) {
-      return process.env[key];
-    }
-  } catch {}
-
-  return '';
-};
-
-const rawUrl = getEnvVar('VITE_SUPABASE_URL').trim();
-const rawAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY').trim();
+const rawUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+const rawAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 
 export interface SupabaseDiagnostics {
   isConfigured: boolean;
@@ -32,13 +17,18 @@ export interface SupabaseDiagnostics {
 export const getSupabaseDiagnostics = (): SupabaseDiagnostics => {
   const hasUrl = Boolean(rawUrl);
   const hasAnonKey = Boolean(rawAnonKey);
-  const isPlaceholderUrl = rawUrl.includes('your-project-id') || rawUrl.includes('example');
-  const isPlaceholderKey = rawAnonKey.includes('your-anon-public-key') || rawAnonKey.includes('example');
+  const isPlaceholderUrl =
+    rawUrl.includes('your-project-id') || rawUrl.includes('example');
+  const isPlaceholderKey =
+    rawAnonKey.includes('your-anon-public-key') || rawAnonKey.includes('example');
   const isValidHttpsUrl = rawUrl.startsWith('https://');
 
-  const isConfigured = hasUrl && hasAnonKey && !isPlaceholderUrl && !isPlaceholderKey && isValidHttpsUrl;
+  const isConfigured =
+    hasUrl && hasAnonKey && !isPlaceholderUrl &&
+    !isPlaceholderKey && isValidHttpsUrl;
 
   let message = 'Supabase client is configured and ready for live cloud authentication and sync.';
+
   if (!hasUrl && !hasAnonKey) {
     message = 'Missing VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in environment.';
   } else if (!hasUrl) {
@@ -46,9 +36,9 @@ export const getSupabaseDiagnostics = (): SupabaseDiagnostics => {
   } else if (!hasAnonKey) {
     message = 'Missing VITE_SUPABASE_ANON_KEY in environment.';
   } else if (isPlaceholderUrl || isPlaceholderKey) {
-    message = 'Placeholder credentials detected in environment. Please provide your actual Supabase project keys in .env.';
+    message = 'Placeholder credentials detected in environment.';
   } else if (!isValidHttpsUrl) {
-    message = 'VITE_SUPABASE_URL must be a valid HTTPS URL (e.g. https://xyzcompany.supabase.co).';
+    message = 'VITE_SUPABASE_URL must use HTTPS.';
   }
 
   return {
@@ -62,9 +52,8 @@ export const getSupabaseDiagnostics = (): SupabaseDiagnostics => {
   };
 };
 
-export const isSupabaseConfigured = (): boolean => {
-  return getSupabaseDiagnostics().isConfigured;
-};
+export const isSupabaseConfigured = (): boolean =>
+  getSupabaseDiagnostics().isConfigured;
 
 export const supabase: SupabaseClient | null = isSupabaseConfigured()
   ? createClient(rawUrl, rawAnonKey, {

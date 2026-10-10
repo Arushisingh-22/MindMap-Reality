@@ -25,10 +25,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isConfigured = diagnostics.isConfigured;
 
   useEffect(() => {
-    if (!isConfigured || !supabase) {
-      setLoading(false);
-      return;
-    }
+  if (!isConfigured || !supabase) {
+  setLoading(false);
+  return;
+}
+
+const client = supabase;
 
     // Helper to fetch profile display name or fall back to user metadata / email
     const resolveUserProfile = async (supabaseUser: any): Promise<UserProfile> => {
@@ -36,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (!displayName) {
         try {
-          const { data: profile } = await supabase
+          const { data: profile } = await client
             .from('profiles')
             .select('display_name')
             .eq('id', supabaseUser.id)

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Send, CheckCircle2, Heart, ShieldCheck, Mail, Sparkles, X } from 'lucide-react';
 import { subjects } from '../data/subjects';
+import { supabase } from '../services/supabase';
 
 export const Footer: React.FC = () => {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -9,17 +10,40 @@ export const Footer: React.FC = () => {
   const [feedbackEmail, setFeedbackEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const handleFeedbackSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!feedbackText.trim()) return;
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFeedbackText('');
-      setFeedbackEmail('');
-      setFeedbackOpen(false);
-    }, 2500);
-  };
+  
+const handleFeedbackSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!feedbackText.trim()) return;
+
+  if (!supabase) {
+  console.error('Supabase is not configured.');
+  alert('Feedback is temporarily unavailable.');
+  return;
+}
+  const { error } = await supabase
+    .from('course_feedback')
+    .insert({
+      email: feedbackEmail.trim() || null,
+      feedback: feedbackText.trim(),
+    });
+
+  if (error) {
+    console.error('Feedback submission failed:', error.message);
+    alert('Feedback could not be submitted. Please try again.');
+    return;
+  }
+
+  setSubmitted(true);
+
+  setTimeout(() => {
+    setSubmitted(false);
+    setFeedbackText('');
+    setFeedbackEmail('');
+    setFeedbackOpen(false);
+  }, 2500);
+};
+
 
   return (
     <>
