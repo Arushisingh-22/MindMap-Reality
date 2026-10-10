@@ -1,3 +1,5 @@
+import { BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
@@ -271,8 +273,7 @@ export const ConceptDetail: React.FC = () => {
                 Mathematical Law / Formula
               </span>
               <div className="py-3 px-4 bg-brand-card rounded-xl border border-sky-200 dark:border-sky-800 flex items-center justify-center font-mono text-xl sm:text-2xl font-black text-brand-primary">
-                {concept.learn.formula}
-              </div>
+                <BlockMath math={concept.learn.formula} />              </div>
               {concept.learn.formulaExplanation && (
                 <p className="text-xs text-sky-800 dark:text-sky-300 font-medium">
                   {concept.learn.formulaExplanation}
